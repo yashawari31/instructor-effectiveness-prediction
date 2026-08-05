@@ -409,7 +409,7 @@ The solution combines learner outcomes, engagement metrics, and feedback to crea
 
 ## **Yash Awari**
 
-📧 Email: *(Add your email)*
+📧 Email: mr.yash3110@gmail.com
 
 🔗 LinkedIn: https://www.linkedin.com/in/yash-awari/
 

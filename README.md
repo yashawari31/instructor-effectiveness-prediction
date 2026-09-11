@@ -411,7 +411,7 @@ The solution combines learner outcomes, engagement metrics, and feedback to crea
 
 📧 Email: mr.yash3110@gmail.com
 
-🔗 LinkedIn: https://www.linkedin.com/in/yash-awari/
+🔗 LinkedIn: https://www.linkedin.com/in/yash-awari-a33823329/
 
 💻 GitHub: https://github.com/yashawari31
 

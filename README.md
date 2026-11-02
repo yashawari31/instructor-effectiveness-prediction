@@ -17,48 +17,52 @@
 
 Educational platforms collect large amounts of learner data, but evaluating instructor performance objectively remains challenging.
 
-This project develops a **Machine Learning pipeline** to predict **Instructor Effectiveness** by analyzing learner performance, engagement, and feedback metrics.
+This project develops a **Machine Learning framework** to analyze and classify **Instructor Effectiveness** using learner performance, engagement, and feedback metrics.
 
-The project follows a complete **Data Science workflow**, including:
+The project follows an end-to-end **Data Science workflow**, including:
 
 - Data Cleaning
 - Exploratory Data Analysis (EDA)
 - Feature Engineering
 - Feature Scaling
 - Instructor-Level Aggregation
-- Machine Learning
+- Instructor Effectiveness Scoring
+- Machine Learning Classification
 - Model Evaluation
-- Business Insights
+- Performance Analysis and Insights
 
 ---
 
-# 📚 Table of Contents
+## 📚 Table of Contents
 
 - [Problem Statement](#-problem-statement)
 - [Dataset](#-dataset)
 - [Project Workflow](#-project-workflow)
 - [Exploratory Data Analysis](#-exploratory-data-analysis)
-- [Feature Engineering](#-feature-engineering)
+- [Feature Engineering](#️-feature-engineering)
 - [Machine Learning](#-machine-learning)
-- [Results](#-results)
-- [Feature Importance](#-feature-importance)
+- [Model Evaluation](#-model-evaluation)
+- [Key Findings](#-key-findings)
+- [Limitations](#️-limitations)
 - [Project Structure](#-project-structure)
 - [Installation](#-installation)
 - [Future Improvements](#-future-improvements)
+- [Conclusion](#-conclusion)
 - [Author](#-author)
 
 ---
 
 # 🎯 Problem Statement
 
-The objective of this project is to identify the effectiveness level of instructors using learner-related performance metrics.
+The objective of this project is to identify instructor effectiveness levels using learner-related performance and engagement metrics.
 
-The workflow includes:
+The framework aims to:
 
-- Understanding learner behaviour
-- Measuring instructor performance
-- Engineering a business-driven effectiveness score
-- Predicting instructor effectiveness using Machine Learning
+- Understand learner behaviour and performance.
+- Analyze instructor-level teaching outcomes.
+- Develop a business-driven instructor effectiveness score.
+- Categorize instructors into effectiveness levels.
+- Apply Machine Learning models to classify instructor effectiveness.
 
 ---
 
@@ -68,7 +72,7 @@ The workflow includes:
 
 | Property | Value |
 |----------|-------|
-| Records | **2000** |
+| Records | **2,000** |
 | Instructors | **120** |
 | Courses | **25** |
 | Features | **12** |
@@ -89,52 +93,56 @@ The workflow includes:
 
 # 🔄 Project Workflow
 
-```
+The project follows a structured data processing and machine learning pipeline.
+
+```text
 Raw Dataset
-      │
-      ▼
+     |
+     ▼
 Data Cleaning
-      │
-      ▼
+     |
+     ▼
 Exploratory Data Analysis
-      │
-      ▼
+     |
+     ▼
 Instructor-Level Aggregation
-      │
-      ▼
+     |
+     ▼
 Feature Scaling
-      │
-      ▼
+     |
+     ▼
 Feature Engineering
-      │
-      ▼
+     |
+     ▼
 Instructor Effectiveness Score
-      │
-      ▼
-Low / Medium / High Labels
-      │
-      ▼
-Random Forest Classifier
-      │
-      ▼
-Model Evaluation
-      │
-      ▼
-Feature Importance
+     |
+     ▼
+Quantile-Based Classification
+(Low / Medium / High)
+     |
+     ▼
+Multiple ML Model Evaluation
+     |
+     ▼
+Logistic Regression
+     |
+     ▼
+Final Model Evaluation
 ```
 
 ---
 
 # 📈 Exploratory Data Analysis
 
-The following analyses were performed:
+The following analyses were performed to understand the dataset and identify patterns:
 
-- ✅ Dataset Inspection
-- ✅ Missing Value Analysis
-- ✅ Duplicate Check
-- ✅ Histograms
-- ✅ Correlation Heatmap
-- ✅ Outlier Detection
+- Dataset Inspection
+- Missing Value Analysis
+- Duplicate Check
+- Numerical Feature Distributions
+- Correlation Analysis
+- Outlier Detection
+- Feature Relationship Analysis
 
 ---
 
@@ -150,188 +158,228 @@ The following analyses were performed:
 
 ### Key Insight
 
-- Strong negative correlation between **Completion Rate** and **Dropout Rate (-0.95)**.
+- A strong negative correlation was observed between **Completion Rate** and **Dropout Rate (-0.95)**.
+- This indicates that higher learner completion rates are associated with lower dropout rates.
 
 ---
 
 ## 📦 Outlier Analysis
 
-Boxplots were used to detect potential outliers.
+Boxplots were used to identify potential outliers in numerical features.
 
-Observation:
+**Observations:**
 
-- Very few outliers were present.
-- Outliers represented genuine instructor performance rather than data errors.
+- Very few outliers were observed.
+- The identified outliers were considered potentially genuine variations in instructor performance rather than data errors.
 
 ---
 
 # ⚙️ Feature Engineering
 
-The dataset originally contained **batch-level records**.
+The original dataset contained **batch-level records**, where multiple records were associated with individual instructors.
 
-It was aggregated into **Instructor-Level** records using mean aggregation.
+To enable instructor-level analysis, the dataset was transformed into **instructor-level profiles** using mean aggregation.
+
+This allowed the analysis to focus on overall instructor performance rather than individual batch observations.
 
 ---
 
 ## Feature Scaling
 
-All numerical variables were normalized using
+Numerical features were normalized using:
 
 > **MinMaxScaler**
 
-to ensure fair contribution to the effectiveness score.
+Scaling was applied to bring numerical variables into a common range before calculating the effectiveness score.
 
 ---
 
 ## Instructor Effectiveness Score
 
-Three intermediate business scores were created:
+A weighted scoring framework was developed using three intermediate scores.
 
 ### 📘 Learning Score
 
-- Completion Rate
-- Score Improvement
-- Quiz Score
+Based on:
 
----
+- Completion Rate
+- Average Score Improvement
+- Average Quiz Score
 
 ### 📙 Engagement Score
 
-- Watch Time
-- Assignment Submission
-- Forum Activity
+Based on:
 
----
+- Average Watch Time
+- Assignment Submission Rate
+- Forum Activity Rate
 
 ### 📗 Feedback Score
 
-- Average Feedback
-- Feedback Response Rate
+Based on:
 
----
+- Average Feedback Score
+- Feedback Response Rate
 
 ### Final Effectiveness Score
 
-```
-Effectiveness Score
+The final score was calculated using the following weighted formula:
 
-=
+```text
+Effectiveness Score =
 
 0.40 × Learning Score
 
-+
++ 0.30 × Engagement Score
 
-0.30 × Engagement Score
++ 0.20 × Feedback Score
 
-+
-
-0.20 × Feedback Score
-
-−
-
-0.10 × Dropout Rate
+− 0.10 × Dropout Rate
 ```
+
+The scoring framework assigns the highest weight to learning outcomes, followed by engagement and feedback, while dropout rate contributes negatively.
 
 ---
 
 # 🤖 Machine Learning
 
-### Model
+## Target Variable Generation
 
-✅ Random Forest Classifier
+Instructor effectiveness was categorized into three classes:
+
+- **Low**
+- **Medium**
+- **High**
+
+Target labels were generated using:
+
+> **Quantile-Based Binning (qcut)**
+
+This approach divided the effectiveness scores into three approximately balanced categories.
+
+## Model Selection
+
+Multiple classification algorithms were evaluated to identify the most suitable baseline model.
+
+The evaluation process used:
+
+> **5-Fold Stratified Cross-Validation**
+
+Stratified cross-validation maintains approximately the same class distribution across training and validation folds.
+
+### Best Performing Model
+
+**Logistic Regression** achieved the best baseline performance among the evaluated models.
+
+It was selected for final evaluation based on its cross-validation performance.
 
 ---
 
-### Target Classes
+# 📊 Model Evaluation
 
-- Low
-- Medium
-- High
+The final Logistic Regression model was evaluated using a held-out test dataset.
 
-Target labels were generated using
+## Cross-Validation Performance
 
-> **Quantile-based Binning (qcut)**
+| Metric | Result |
+|--------|--------|
+| Validation Strategy | 5-Fold Stratified Cross-Validation |
+| Mean Cross-Validation Accuracy | **91.67%** |
+| Best Baseline Model | **Logistic Regression** |
 
-to create balanced classes.
+## Final Test Performance
+
+<details>
+<summary><b>Model Performance Summary</b></summary>
+
+| Metric | Result |
+|--------|--------|
+| Model | Logistic Regression |
+| Test Accuracy | **87.50%** |
+| Macro F1-Score | **0.88** |
+| Total Test Samples | 24 |
+| Correct Predictions | 21 |
+| Incorrect Predictions | 3 |
+
+</details>
+
+### 🎯 Test Accuracy
+
+**87.50%**
+
+The model correctly classified 21 out of 24 test samples.
 
 ---
 
-# 📊 Results
+## Confusion Matrix
 
-### Model Accuracy
-
-## 🎯 75%
-
----
-
-### Confusion Matrix
+The confusion matrix illustrates the classification performance across Low, Medium, and High instructor effectiveness categories.
 
 ![Confusion Matrix](images/confusion_matrix.png)
 
----
+### Classification Observations
 
-### Classification Summary
-
-- Accuracy: **75%**
-- Balanced class distribution
-- Most errors occurred between Medium and High classes
-
----
-
-# 📌 Feature Importance
-
-The Random Forest model identified the following important features:
-
-1. Completion Rate
-2. Dropout Rate
-3. Feedback Response Rate
-4. Average Score Improvement
-5. Average Quiz Score
+- The model correctly classified **21 out of 24 test samples**.
+- Three test samples were misclassified.
+- Most classification errors occurred between neighboring effectiveness categories.
+- The model demonstrated good classification performance on the held-out test set.
 
 ---
 
-### Feature Importance Plot
+# 💡 Key Findings
 
-![Feature Importance](images/feature_imp.png)
+The analysis produced the following findings:
+
+1. **Instructor-Level Analysis:** Transforming batch-level records into instructor-level profiles enabled a more meaningful evaluation of instructor performance.
+
+2. **Weighted Effectiveness Framework:** Learning outcomes, engagement, feedback, and dropout rate were combined into a single effectiveness score.
+
+3. **Balanced Classification:** Quantile-based classification was used to categorize instructors into Low, Medium, and High effectiveness levels.
+
+4. **Model Performance:** Logistic Regression achieved the best baseline performance, with a mean cross-validation accuracy of **91.67%**.
+
+5. **Final Evaluation:** The selected model achieved **87.50% test accuracy** and a **macro F1-score of 0.88**.
+
+6. **Classification Errors:** Most errors occurred between neighboring effectiveness categories, suggesting that some instructors had relatively similar effectiveness scores.
 
 ---
 
-# 💡 Key Insights
+# ⚠️ Limitations
 
-- Completion Rate is the strongest predictor of instructor effectiveness.
-- Dropout Rate significantly impacts instructor performance.
-- Learner engagement contributes positively to effectiveness.
-- Feedback metrics provide additional predictive value.
-- Forum activity has comparatively lower influence.
+An important limitation of this project is related to the generation of the target variable.
+
+- Instructor effectiveness labels were generated using a weighted scoring methodology rather than independently collected real-world labels.
+- The scoring framework used learner performance, engagement, feedback, and dropout features.
+- These same underlying features were also used as inputs to the machine learning models.
+- Consequently, the model learns to reproduce the engineered effectiveness classification rather than independently measure real-world instructor effectiveness.
+- The feature weights were based on domain assumptions and may require validation.
+
+Therefore, the reported model performance should be interpreted as its ability to classify instructors according to the proposed scoring framework.
+
+It should not be considered independent proof of actual teaching effectiveness.
 
 ---
 
 # 📁 Project Structure
 
-```
+```text
 Instructor-Effectiveness-Prediction/
-
 │
-
 ├── data/
-│ └── instructor_data.csv
-
+│   └── instructor_data.csv
+│
 ├── notebooks/
-│ └── Instructor_Effectiveness_Analysis.ipynb
-
+│   └── Instructor_Effectiveness_Analysis.ipynb
+│
 ├── images/
-│ ├── histogram.png
-│ ├── heatmap.png
-│ ├── confusion_matrix.png
-│ ├── feature_importance.png
-│ └── effectiveness_distribution.png
-
+│   ├── distribution_hist.png
+│   ├── heatmap.png
+│   ├── confusion_matrix.png
+│   └── feature_imp.png
+│
 ├── README.md
-
 ├── requirements.txt
-
 ├── LICENSE
-
 └── .gitignore
 ```
 
@@ -339,35 +387,39 @@ Instructor-Effectiveness-Prediction/
 
 # 🚀 Installation
 
-Clone the repository
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/yashawari31/instructor-effectiveness-prediction.git
 ```
 
-Go inside the project
+### 2. Navigate to the Project Directory
 
 ```bash
 cd instructor-effectiveness-prediction
 ```
 
-Install dependencies
+### 3. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Run Jupyter Notebook
+### 4. Launch Jupyter Notebook
 
 ```bash
 jupyter notebook
 ```
 
+Open the notebook inside the `notebooks` directory to explore the complete analysis and implementation.
+
 ---
 
 # 📦 Requirements
 
-```
+The project uses the following Python libraries:
+
+```text
 pandas
 numpy
 matplotlib
@@ -380,28 +432,26 @@ jupyter
 
 # 🔮 Future Improvements
 
-- Use real instructor effectiveness labels.
-- Hyperparameter tuning.
-- Cross-validation.
-- XGBoost implementation.
-- Deploy using Streamlit.
-- Include course difficulty and instructor experience.
-
----
-
-# ⚠️ Limitations
-
-- Instructor effectiveness labels were generated using a business-driven scoring methodology rather than real-world labels.
-- Feature weights were based on domain assumptions.
-- Additional instructor-related information was unavailable.
+- Collect independent real-world instructor effectiveness labels through expert evaluations, learner surveys, and subsequent learner outcomes.
+- Incorporate additional factors such as course difficulty, instructor experience, and learner demographics.
+- Experiment with advanced classification algorithms such as Gradient Boosting and XGBoost.
+- Increase the dataset size to improve the reliability and generalizability of the analysis.
+- Validate the weighted effectiveness scoring framework against independently observed instructor performance.
+- Explore model interpretability techniques to better understand the factors influencing predictions.
 
 ---
 
 # 🏆 Conclusion
 
-This project demonstrates an end-to-end Machine Learning workflow for evaluating instructor effectiveness using educational data.
+This project developed an end-to-end data science framework for analyzing and classifying instructor effectiveness using learner performance, engagement, and feedback metrics.
 
-The solution combines learner outcomes, engagement metrics, and feedback to create an interpretable instructor effectiveness framework and achieves **75% classification accuracy** using a Random Forest Classifier.
+The framework transformed batch-level records into instructor-level profiles and introduced a weighted effectiveness scoring methodology to categorize instructors into Low, Medium, and High effectiveness levels.
+
+Multiple machine learning models were evaluated using 5-fold stratified cross-validation. Logistic Regression achieved the best baseline performance with a mean cross-validation accuracy of **91.67%**.
+
+The final model achieved **87.50% accuracy** and a **macro F1-score of 0.88** on the held-out test set, correctly classifying 21 out of 24 samples.
+
+While the results demonstrate the ability of machine learning to reproduce the proposed effectiveness classification framework, independent real-world validation is necessary before applying it as an objective measure of instructor performance.
 
 ---
 
@@ -409,9 +459,9 @@ The solution combines learner outcomes, engagement metrics, and feedback to crea
 
 ## **Yash Awari**
 
-📧 Email: *(Add your email)*
+📧 Email: mr.yash3110@gmail.com
 
-🔗 LinkedIn: https://www.linkedin.com/in/yash-awari/
+🔗 LinkedIn: https://www.linkedin.com/in/yash-awari-a33823329/
 
 💻 GitHub: https://github.com/yashawari31
 
